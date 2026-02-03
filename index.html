@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Valentine 💖</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(-45deg, #ff758f, #ff9a9e, #fad0c4, #ffdde1);
+    background-size: 400% 400%;
+    animation: bgMove 12s ease infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+@keyframes bgMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.heart {
+    position: absolute;
+    font-size: 22px;
+    opacity: 0.7;
+    animation: floatUp 4s linear forwards;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(100vh) scale(1); opacity: 1; }
+    to { transform: translateY(-10vh) scale(1.4); opacity: 0; }
+}
+
+.card {
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 24px;
+    padding: 35px 30px;
+    width: 90%;
+    max-width: 360px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(255, 77, 109, 0.4),
+                0 10px 40px rgba(0,0,0,0.2);
+    animation: cardEnter 1s ease;
+    position: relative;
+}
+
+@keyframes cardEnter {
+    from { opacity: 0; transform: translateY(40px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+h1 {
+    color: #6a0026;
+    font-size: 22px;
+    margin-bottom: 22px;
+}
+
+button {
+    padding: 12px 26px;
+    font-size: 16px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+button:hover { transform: scale(1.08); }
+
+.yes {
+    background: linear-gradient(135deg, #ff4d6d, #ff758f);
+    color: white;
+    animation: pulse 1.6s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 10px rgba(255,77,109,0.5); }
+    50% { box-shadow: 0 0 22px rgba(255,77,109,0.9); }
+    100% { box-shadow: 0 0 10px rgba(255,77,109,0.5); }
+}
+
+.no {
+    background: rgba(255,255,255,0.8);
+    position: absolute;
+    left: 20px;
+    top: 130px;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h1>💘 Muskan, will you be my Valentine? 💘</h1>
+    <button class="yes" onclick="yesClick()">Yes ❤️</button>
+    <button class="no" id="noBtn" onclick="noClick()">No 😢</button>
+</div>
+
+<audio id="music" loop>
+    <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_5e6c8b9c3c.mp3" type="audio/mpeg">
+</audio>
+
+<canvas id="fireworks"></canvas>
+
+<script>
+/* Floating hearts */
+setInterval(() => {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.innerText = "💖";
+    h.style.left = Math.random() * window.innerWidth + "px";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 4000);
+}, 220);
+
+const noBtn = document.getElementById("noBtn");
+const card = document.querySelector(".card");
+
+setInterval(() => {
+    const maxX = card.clientWidth - noBtn.offsetWidth;
+    const maxY = card.clientHeight - noBtn.offsetHeight;
+    noBtn.style.left = Math.random() * maxX + "px";
+    noBtn.style.top = Math.random() * maxY + "px";
+}, 700);
+
+function noClick() {
+    const cry = document.createElement("div");
+    cry.innerText = "😭";
+    cry.style.position = "fixed";
+    cry.style.fontSize = "50px";
+    cry.style.left = Math.random() * window.innerWidth + "px";
+    cry.style.top = Math.random() * window.innerHeight + "px";
+    document.body.appendChild(cry);
+    setTimeout(() => cry.remove(), 1000);
+}
+
+/* YES click */
+function yesClick() {
+    document.getElementById("music").play();
+
+    document.body.innerHTML = `
+    <div style="
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+        background:linear-gradient(135deg,#c9184a,#ff758f);
+        color:white;
+        text-align:center;
+        padding:20px;
+    ">
+        <h1>💖 Yayyy Muskan! 💖</h1>
+        <p id="typedText" style="font-size:18px; max-width:320px; line-height:1.6;"></p>
+        <img src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif"
+             style="width:250px; margin-top:20px; border-radius:20px;">
+        <canvas id="fireworks"></canvas>
+    </div>
+    <audio autoplay loop>
+        <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_5e6c8b9c3c.mp3">
+    </audio>
+    `;
+
+    startTyping();
+    startFireworks();
+}
+
+/* Typing text */
+function startTyping() {
+    const text = 
+`I knew it 😍💖
+Every smile of yours makes my world brighter ✨😊
+I choose you, today and always ❤️♾️`;
+
+    let i = 0;
+    const target = document.getElementById("typedText");
+
+    const typing = setInterval(() => {
+        target.innerHTML += text.charAt(i) === "\n" ? "<br>" : text.charAt(i);
+        i++;
+        if (i >= text.length) clearInterval(typing);
+    }, 60);
+}
+
+/* Fireworks */
+function startFireworks() {
+    const canvas = document.getElementById("fireworks");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles = [];
+
+    function boom() {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height / 2;
+        for (let i = 0; i < 40; i++) {
+            particles.push({
+                x, y,
+                dx: (Math.random() - 0.5) * 7,
+                dy: (Math.random() - 0.5) * 7,
+                life: 60
+            });
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p, i) => {
+            p.x += p.dx;
+            p.y += p.dy;
+            p.life--;
+            ctx.fillStyle = "#ffd166";
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+            ctx.fill();
+            if (p.life <= 0) particles.splice(i, 1);
+        });
+        requestAnimationFrame(animate);
+    }
+
+    setInterval(boom, 700);
+    animate();
+}
+</script>
+
+</body>
+</html>
